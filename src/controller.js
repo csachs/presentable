@@ -131,7 +131,7 @@ define('controller', ['html', 'json','util'], function(html, json, util) {
              * @param tocArray
              * @returns {*}
              */
-            tocSlideDataRecursive: function(tocArray) {
+            tocSlideDataRecursiveInner: function(tocArray) {
                 for (var i = 0; i < tocArray.length; i++) {
 
                     if (tocArray[i].toc) {
@@ -139,8 +139,25 @@ define('controller', ['html', 'json','util'], function(html, json, util) {
                     }
 
                     if (tocArray[i].nested) {
-                        return main.tocSlideDataRecursive(tocArray[i].nested);
+                        var intermediate = main.tocSlideDataRecursiveInner(tocArray[i].nested);
+                        if (intermediate !== null) {
+                            return intermediate;
+                        }
                     }
+                }
+                return null;
+            },
+
+            /**
+             * private
+             *
+             * @param tocArray
+             * @returns {*}
+             */
+            tocSlideDataRecursive: function(tocArray) {
+                var intermediate = main.tocSlideDataRecursiveInner(tocArray);
+                if (intermediate !== null) {
+                    return intermediate;
                 }
                 throw {message: 'Table of Contents container not found in presentation.'};
             },
